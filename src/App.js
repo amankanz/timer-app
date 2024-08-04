@@ -54,6 +54,11 @@ function Timer() {
     }));
   }
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    handleStart();
+  }
+
   function handleStart() {
     setIsRunning(true);
   }
@@ -68,12 +73,12 @@ function Timer() {
   }
   return (
     <main>
-      <section>
+      <form onSubmit={handleSubmit}>
         <input
           type="number"
           placeholder="Enter hours"
           name="hours"
-          value={time.hours}
+          value={time.hours === 0 ? "" : time.hours}
           onChange={handleChange}
         />
         :
@@ -81,7 +86,7 @@ function Timer() {
           type="number"
           name="minutes"
           placeholder="Enter minutes"
-          value={time.minutes}
+          value={time.minutes === 0 ? "" : time.minutes}
           onChange={handleChange}
         />
         :
@@ -89,10 +94,10 @@ function Timer() {
           type="number"
           name="seconds"
           placeholder="Enter seconds"
-          value={time.seconds}
+          value={time.seconds === 0 ? "" : time.minutes}
           onChange={handleChange}
         />
-      </section>
+      </form>
 
       <section>
         <Button onClick={handleStart}>Start</Button>
