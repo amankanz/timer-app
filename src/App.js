@@ -1,25 +1,114 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
 
-function App() {
+const initial_time = { hours: 0, minutes: 0, seconds: 0 };
+
+export default function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Timer App</h1>
+      <Timer />
     </div>
   );
 }
 
-export default App;
+function Timer() {
+  const [time, setTime] = useState(initial_time);
+  const [isRunning, setIsRunning] = useState(false);
+
+  useEffect(() => {
+    let interval = null;
+
+    if (isRunning) {
+      interval = setInterval(() => {
+        setTime((prevTime) => {
+          let { hours, minutes, seconds } = prevTime;
+
+          if (seconds > 0) seconds--;
+          else if (minutes > 0) {
+            minutes--;
+            seconds = 59;
+          } else if (hours > 0) {
+            hours--;
+            minutes = 59;
+            seconds = 59;
+          }
+
+          return { hours, minutes, seconds };
+        });
+      }, 1000);
+    } else if (
+      !isRunning &&
+      (time.hours !== 0 || time.minutes !== 0 || time.seconds !== 0)
+    ) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isRunning, time]);
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+
+    setTime((prevTime) => ({
+      ...prevTime,
+      [name]: Number(value),
+    }));
+  }
+
+  function handleStart() {
+    setIsRunning(true);
+  }
+
+  function handlePause() {
+    setIsRunning(false);
+  }
+
+  function handleReset() {
+    setIsRunning(false);
+    setTime(initial_time);
+  }
+  return (
+    <main>
+      <section>
+        <input
+          type="number"
+          placeholder="Enter hours"
+          name="hours"
+          value={time.hours}
+          onChange={handleChange}
+        />
+        :
+        <input
+          type="number"
+          name="minutes"
+          placeholder="Enter minutes"
+          value={time.minutes}
+          onChange={handleChange}
+        />
+        :
+        <input
+          type="number"
+          name="seconds"
+          placeholder="Enter seconds"
+          value={time.seconds}
+          onChange={handleChange}
+        />
+      </section>
+
+      <section>
+        <Button onClick={handleStart}>Start</Button>
+        <Button onClick={handlePause}>Pause</Button>
+        <Button onClick={handleReset}>Reset</Button>
+      </section>
+
+      <section>
+        <span>{String(time.hours).padStart(2, "0")}:</span>
+        <span>{String(time.minutes).padStart(2, "0")}:</span>
+        <span>{String(time.seconds).padStart(2, "0")}</span>
+      </section>
+    </main>
+  );
+}
+
+function Button({ children, onClick }) {
+  return <button onClick={onClick}>{children}</button>;
+}
