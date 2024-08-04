@@ -94,16 +94,13 @@ function Timer() {
           type="number"
           name="seconds"
           placeholder="Enter seconds"
-          value={time.seconds === 0 ? "" : time.minutes}
+          value={time.seconds === 0 ? "" : time.seconds}
           onChange={handleChange}
         />
-      </form>
-
-      <section>
         <Button onClick={handleStart}>Start</Button>
         <Button onClick={handlePause}>Pause</Button>
         <Button onClick={handleReset}>Reset</Button>
-      </section>
+      </form>
 
       <section>
         <span>{String(time.hours).padStart(2, "0")}:</span>
